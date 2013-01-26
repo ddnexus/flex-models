@@ -9,7 +9,7 @@ module Flex
         docs = super
         if docs.is_a?(Array)
           res = docs.map {|d| build_object(d, freeze)}
-          res.extend Result::Collection
+          res.extend Struct::Paginable
           res.setup docs.size, variables
           res
         else

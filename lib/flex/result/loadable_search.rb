@@ -24,7 +24,7 @@ module Flex
                                      record.class.to_s == class_str && record.id.to_s == id.to_s
                                    end
                                  end
-                                 records.extend Collection
+                                 records.extend Struct::Paginable
                                  records.setup(self['hits']['total'], variables)
                                  records
                                end
