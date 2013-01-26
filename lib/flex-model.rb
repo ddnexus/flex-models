@@ -10,6 +10,8 @@ require 'flex/instance_proxy/base'
 require 'flex/instance_proxy/model'
 require 'flex/instance_proxy/related_model'
 
+require 'flex/manager'
+
 require 'flex/related_model'
 require 'flex/model'
 
@@ -20,9 +22,12 @@ require 'flex/class_proxy/stored_model'
 require 'flex/instance_proxy/stored_model'
 require 'flex/stored_model'
 require 'flex/refresh_callbacks'
+
+require 'flex/result/document'
 require 'flex/result/stored_model'
 
 Flex::LIB_PATHS << __FILE__.sub(/flex-model.rb$/, '')
 
 # get_docs calls super so we make sure the result is extended by Scope first
-Flex::Conf.result_extenders |= [Flex::Result::Scope, Flex::Result::StoredModel]
+Flex::Conf.result_extenders |= [Flex::Result::Document, Flex::Result::Scope, Flex::Result::StoredModel]
+Flex::Conf.flex_models = []
