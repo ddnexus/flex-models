@@ -2,6 +2,7 @@ require 'flex'
 require 'flex/scopes'
 require 'active_attr'
 
+require 'flex/struct/mergeable'
 require 'flex/class_proxy/model_sync'
 require 'flex/class_proxy/model'
 require 'flex/class_proxy/related_model'
