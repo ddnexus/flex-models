@@ -28,6 +28,12 @@ module Flex
       end
 
     end
-    Document = LoadableDocument # backward compatible
+
+    # backward compatibility
+    module Document
+      NEW_MODULE = LoadableDocument
+      extend Utils::DeprecateModule
+    end
+
   end
 end
