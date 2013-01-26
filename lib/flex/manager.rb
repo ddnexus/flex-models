@@ -17,7 +17,7 @@ module Flex
                              default = {}.extend Struct::Mergeable
                              Conf.flex_models.each do |m|
                                m = eval"::#{m}" if m.is_a?(String)
-                              default.deep_merge! m.flex.get_index_mapping
+                              default.deep_merge! m.flex.get_default_mapping
                              end
                              default
                            end

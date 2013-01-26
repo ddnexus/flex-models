@@ -9,17 +9,11 @@ module Flex
     #        "_id" : "1",
     #    }
 
-    module Document
-
-      META = %w[_index _type _id]
+    module LoadableDocument
 
       # extend if result has a structure like a document
       def self.should_extend?(obj)
-        META.all? {|k| obj.has_key?(k)}
-      end
-
-      META.each do |m|
-        define_method(m){self["#{m}"]}
+        %w[_index _type _id].all? {|k| obj.has_key?(k)}
       end
 
       def mapped_class(should_raise=false)
@@ -30,9 +24,10 @@ module Flex
       end
 
       def load
-        mapped_class.find _id
+        mapped_class.find self['_id']
       end
 
     end
+    Document = LoadableDocument # backward compatible
   end
 end
