@@ -12,7 +12,7 @@ module Flex
         super
       end
 
-      def get_index_mapping
+      def get_default_mapping
         props = { }
         context.attributes.each do |name, attr|
           options     = attr.send(:options)
@@ -28,7 +28,7 @@ module Flex
                           next
                         end
         end
-        { index => { 'mappings' => { type => { 'properties' => props } } } } unless props.empty?
+        props.empty? ? super :  super.deep_merge(index => {'mappings' => {type => {'properties' => props}}})
       end
 
     end

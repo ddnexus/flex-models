@@ -22,6 +22,16 @@ module Flex
         !!@is_child
       end
 
+      def get_default_mapping
+        default = {index => {}}.extend Struct::Mergeable
+        if is_child?
+          parent_child_map.each do |parent, child|
+            default.deep_merge! index => {'mappings' => {child => {'_parent' => {'type' => parent}}}}
+          end
+        end
+        default
+      end
+
     end
   end
 end
