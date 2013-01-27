@@ -3,17 +3,16 @@ require 'flex/scopes'
 require 'active_attr'
 
 require 'flex/struct/mergeable'
-require 'flex/class_proxy/model_sync'
 require 'flex/class_proxy/model_mapper'
-require 'flex/class_proxy/related_model'
+require 'flex/class_proxy/model_syncer'
 
 require 'flex/instance_proxy/base'
 require 'flex/instance_proxy/model_mapper'
-require 'flex/instance_proxy/related_model'
+require 'flex/instance_proxy/model_syncer'
 
 require 'flex/manager'
 
-require 'flex/related_model'
+require 'flex/model_syncer'
 require 'flex/model_mapper'
 
 require 'flex/stored_model/timestamps'

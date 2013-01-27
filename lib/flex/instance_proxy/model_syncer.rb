@@ -1,6 +1,6 @@
 module Flex
   module InstanceProxy
-    class RelatedModel < Base
+    class ModelSyncer < Base
 
     end
   end

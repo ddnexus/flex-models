@@ -8,6 +8,7 @@ module Flex
       base.class_eval do
         @flex ||= ClassProxy::Base.new(base)
         @flex.extend(ClassProxy::ModelMapper).init
+        @flex.extend(ClassProxy::ModelSyncer)
         @flex.extend(ClassProxy::StoredModel).init :params => {:version => true}
         def self.flex; @flex end
 

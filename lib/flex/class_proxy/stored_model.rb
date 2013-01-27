@@ -6,12 +6,6 @@ module Flex
         variables.deep_merge! *vars
       end
 
-      def sync(*synced)
-        raise ArgumentError, 'You cannot flex.sync(self) a Flex::StoredModel.' \
-              if synced.any?{|s| s == host_class}
-        super
-      end
-
       def get_default_mapping
         props = { }
         context.attributes.each do |name, attr|
