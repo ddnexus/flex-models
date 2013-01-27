@@ -15,17 +15,17 @@ require 'flex/manager'
 require 'flex/model_syncer'
 require 'flex/model_mapper'
 
-require 'flex/stored_model/timestamps'
-require 'flex/stored_model/inspection'
-require 'flex/stored_model/storage'
-require 'flex/class_proxy/stored_model'
-require 'flex/instance_proxy/stored_model'
-require 'flex/stored_model'
+require 'flex/active_model/timestamps'
+require 'flex/active_model/inspection'
+require 'flex/active_model/storage'
+require 'flex/class_proxy/active_model'
+require 'flex/instance_proxy/active_model'
+require 'flex/active_model'
 require 'flex/refresh_callbacks'
 
 require 'flex/result/document_mapper'
 require 'flex/result/search_mapper'
-require 'flex/result/stored_model'
+require 'flex/result/active_model'
 
 require 'flex/deprecation'
 
@@ -35,5 +35,5 @@ Flex::LIB_PATHS << __FILE__.sub(/flex-model.rb$/, '')
 Flex::Conf.result_extenders |= [ Flex::Result::DocumentMapper,
                                  Flex::Result::SearchMapper,
                                  Flex::Result::Scope,
-                                 Flex::Result::StoredModel ]
+                                 Flex::Result::ActiveModel ]
 Flex::Conf.flex_models = []

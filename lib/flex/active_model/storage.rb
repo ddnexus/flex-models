@@ -1,5 +1,5 @@
 module Flex
-  module StoredModel
+  module ActiveModel
     module Storage
 
       module ClassMethods

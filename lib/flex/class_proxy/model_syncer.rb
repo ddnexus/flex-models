@@ -6,8 +6,8 @@ module Flex
 
       def sync(*synced)
 
-        # Flex::StoredModel has its own way of syncing, and a Flex::ModelSyncer only cannot be synced
-        if synced.any?{|s| s == context} && context.include?(Flex::StoredModel) || !context.include?(Flex::ModelMapper)
+        # Flex::ActiveModel has its own way of syncing, and a Flex::ModelSyncer only cannot be synced
+        if synced.any?{|s| s == context} && context.include?(Flex::ActiveModel) || !context.include?(Flex::ModelMapper)
           raise ArgumentError, %(You cannot flex.sync(self) #{self}.)
         end
 

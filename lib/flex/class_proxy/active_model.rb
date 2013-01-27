@@ -1,6 +1,6 @@
 module Flex
   module ClassProxy
-    module StoredModel
+    module ActiveModel
 
       def init(*vars)
         variables.deep_merge! *vars

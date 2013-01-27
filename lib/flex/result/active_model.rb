@@ -1,10 +1,10 @@
 module Flex
   class Result
-    module StoredModel
+    module ActiveModel
 
       # super is from flex-scopes
       def get_docs
-        return super unless variables[:context].include?(Flex::StoredModel)
+        return super unless variables[:context].include?(Flex::ActiveModel)
         freeze = !!variables[:params][:fields]
         docs = super
         if docs.is_a?(Array)

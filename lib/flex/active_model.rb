@@ -1,5 +1,5 @@
 module Flex
-  module StoredModel
+  module ActiveModel
 
     attr_reader :_version, :_id
     alias_method :id, :_id
@@ -9,13 +9,13 @@ module Flex
         @flex ||= ClassProxy::Base.new(base)
         @flex.extend(ClassProxy::ModelMapper).init
         @flex.extend(ClassProxy::ModelSyncer)
-        @flex.extend(ClassProxy::StoredModel).init :params => {:version => true}
+        @flex.extend(ClassProxy::ActiveModel).init :params => {:version => true}
         def self.flex; @flex end
 
         include Scopes
         include ActiveAttr::Model
 
-        extend  ActiveModel::Callbacks
+        extend  ::ActiveModel::Callbacks
         define_model_callbacks :create, :update, :save, :destroy
 
         include Storage::InstanceMethods
@@ -26,7 +26,7 @@ module Flex
     end
 
     def flex
-      @flex ||= InstanceProxy::StoredModel.new(self)
+      @flex ||= InstanceProxy::ActiveModel.new(self)
     end
 
     def flex_source

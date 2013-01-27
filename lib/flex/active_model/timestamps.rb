@@ -1,5 +1,5 @@
 module Flex
-  module StoredModel
+  module ActiveModel
     module Timestamps
 
       def attribute_timestamps(props={})
