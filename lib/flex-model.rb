@@ -27,7 +27,7 @@ require 'flex/result/document_mapper'
 require 'flex/result/search_mapper'
 require 'flex/result/active_model'
 
-require 'flex/deprecation'
+require 'flex/model_deprecation'
 
 Flex::LIB_PATHS << __FILE__.sub(/flex-model.rb$/, '')
 
