@@ -1,16 +1,16 @@
 module Flex
-  module Model
+  module ModelMapper
 
     def self.included(base)
       base.class_eval do
         @flex ||= ClassProxy::Base.new(base)
-        @flex.extend(ClassProxy::Model).init
+        @flex.extend(ClassProxy::ModelMapper).init
         def self.flex; @flex end
       end
     end
 
     def flex
-      @flex ||= InstanceProxy::Model.new(self)
+      @flex ||= InstanceProxy::ModelMapper.new(self)
     end
 
     def flex_source
@@ -22,4 +22,5 @@ module Flex
     end
 
   end
+
 end

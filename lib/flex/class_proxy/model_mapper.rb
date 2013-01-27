@@ -1,6 +1,6 @@
 module Flex
   module ClassProxy
-    module Model
+    module ModelMapper
 
       attr_reader :parent_association, :parent_child_map
       include ModelSync
