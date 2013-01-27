@@ -24,8 +24,8 @@ require 'flex/instance_proxy/stored_model'
 require 'flex/stored_model'
 require 'flex/refresh_callbacks'
 
-require 'flex/result/loadable_document'
-require 'flex/result/loadable_search'
+require 'flex/result/document_mapper'
+require 'flex/result/search_mapper'
 require 'flex/result/stored_model'
 
 require 'flex/deprecation'
@@ -33,8 +33,8 @@ require 'flex/deprecation'
 Flex::LIB_PATHS << __FILE__.sub(/flex-model.rb$/, '')
 
 # get_docs calls super so we make sure the result is extended by Scope first
-Flex::Conf.result_extenders |= [ Flex::Result::LoadableDocument,
-                                 Flex::Result::LoadableSearch,
+Flex::Conf.result_extenders |= [ Flex::Result::DocumentMapper,
+                                 Flex::Result::SearchMapper,
                                  Flex::Result::Scope,
                                  Flex::Result::StoredModel ]
 Flex::Conf.flex_models = []

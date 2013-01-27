@@ -6,7 +6,7 @@ module Flex
   end
 
   module Result::Document
-    NEW_MODULE = Result::LoadableDocument
+    NEW_MODULE = Result::DocumentMapper
     extend Utils::DeprecateModule
   end
 
