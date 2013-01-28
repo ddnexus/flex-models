@@ -1,11 +1,10 @@
-# Flex-persistence
+# Flex-model
 
-Flex Plugin: provides ElasticSearch persistence. It includes: ActiveModel validation and callbacks; ActiveAttr typecasting, attribute defaults.
-It implements storage, finders, and optimistic lock update, inline scope templates, etc.
+Flex Plugin: allows to map any ActiveRecord or Mongoid model structure to any Elasticsearch index. It also allows to use the Elasticsearch index as a data storage managed with ActiveModel validation and callbacks; ActiveAttr typecasting, attribute defaults. It implements storage, with optional optimistic lock update, finders, inline scope for easy query definition, etc.
 
 ## Useful Links
 
-* [Documentation](https://github.com/ddnexus/flex/wiki/flex-persistence)
+* [Documentation](https://github.com/ddnexus/flex/wiki/flex-model)
 
 ## Credits
 
@@ -14,4 +13,4 @@ Special thanks for their sponsorship to [Escalate Media](http://www.escalatemedi
 ## Copyright
 
 Copyright (c) 2012-2013 by [Domizio Demichelis](mailto://dd.nexus@gmail.com)<br>
-See [LICENSE](./flex-rails/blob/master/LICENSE) for details.
+See [LICENSE](./flex-model/blob/master/LICENSE) for details.

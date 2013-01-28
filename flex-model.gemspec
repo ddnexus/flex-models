@@ -17,6 +17,6 @@ Flex Plugin: allows to map any ActiveRecord or Mongoid model structure to any El
   s.rdoc_options              = %w[--charset=UTF-8]
 
   s.add_runtime_dependency 'flex', '~> 1.0.0'
-  s.add_runtime_dependency 'flex-scopes', '~> 0.1.0'
+  s.add_runtime_dependency 'flex-scopes', '~> 1.0.0'
   s.add_runtime_dependency 'active_attr', '~> 0.6.0'
 end
