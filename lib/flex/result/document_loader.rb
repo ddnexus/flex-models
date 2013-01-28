@@ -9,7 +9,7 @@ module Flex
     #        "_id" : "1",
     #    }
 
-    module DocumentMapper
+    module DocumentLoader
 
       # extend if result has a structure like a document
       def self.should_extend?(obj)

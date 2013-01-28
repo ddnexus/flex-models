@@ -1,6 +1,6 @@
 module Flex
   module InstanceProxy
-    class ActiveModel < ModelMapper
+    class ActiveModel < ModelIndexer
 
       def store(*vars)
         return super unless instance.flex_indexable? # this should never happen since flex_indexable? returns true

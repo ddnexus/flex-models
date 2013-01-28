@@ -1,6 +1,6 @@
 module Flex
   module ClassProxy
-    module ModelMapper
+    module ModelIndexer
 
       attr_reader :parent_association, :parent_child_map
       include CommonVars

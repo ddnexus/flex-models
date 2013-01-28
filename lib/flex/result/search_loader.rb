@@ -1,14 +1,14 @@
 module Flex
   class Result
-    module SearchMapper
+    module SearchLoader
 
       # extend if result comes from a search url
       def self.should_extend?(result)
         result['hits'] && result['hits']['hits']
       end
 
-      def mapped_collection
-        @mapped_collection ||= begin
+      def loaded_collection
+        @loaded_collection ||= begin
                                  records  = []
                                  # returns a structure like {Comment=>[{"_id"=>"123", ...}, {...}], BlogPost=>[...]}
                                  h = Utils.group_array_by(collection) do |d|
@@ -29,7 +29,6 @@ module Flex
                                  records
                                end
       end
-      alias_method :loaded_collection, :mapped_collection
 
     end
   end

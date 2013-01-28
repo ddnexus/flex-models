@@ -1,6 +1,6 @@
 module Flex
   module InstanceProxy
-    class ModelMapper < Base
+    class ModelIndexer < Base
 
       # indexes the document
       # usually called from after_save, you can eventually call it explicitly for example from another callback

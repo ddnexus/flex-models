@@ -15,7 +15,7 @@ module Flex
         class_flex.synced.each do |synced|
           case
           # sync self
-          # only called for Flex::ModelMapper
+          # only called for Flex::ModelIndexer
           when synced == instance.class
             instance.destroyed? ? remove : store
           # sync :author, :comments
