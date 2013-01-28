@@ -38,6 +38,10 @@ module Flex
         end
       end
 
+      def refresh_index
+        class_flex.refresh_index
+      end
+
     end
   end
 end
