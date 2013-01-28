@@ -1,4 +1,4 @@
-require 'flex-models'
+require 'flex-model'
 require 'flex/flex_model_tasks'
 
 env   = defined?(Rails) ? :environment : []
