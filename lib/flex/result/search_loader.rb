@@ -2,14 +2,14 @@ module Flex
   class Result
     module SearchLoader
 
-      # extend if result comes from a search url
+      # extend if result is a Search or MultiGet
       def self.should_extend?(result)
-        result.is_a? Search
+        result.is_a?(Search) || result.is_a?(MultiGet)
       end
 
-      # extend the hits results on extended
+      # extend the collection on extend
       def self.extended(result)
-        result['hits']['hits'].each { |h| h.extend(DocumentLoader) }
+        result.collection.each { |h| h.extend(DocumentLoader) }
       end
 
       def loaded_collection
@@ -30,7 +30,7 @@ module Flex
                                    end
                                  end
                                  records.extend Struct::Paginable
-                                 records.setup(self['hits']['total'], variables)
+                                 records.setup(collection.total_entries, variables)
                                  records
                                end
       end
