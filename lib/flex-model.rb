@@ -32,6 +32,5 @@ Flex::LIB_PATHS << __FILE__.sub(/flex-model.rb$/, '')
 # get_docs calls super so we make sure the result is extended by Scope first
 Flex::Conf.result_extenders |= [ Flex::Result::DocumentLoader,
                                  Flex::Result::SearchLoader,
-                                 Flex::Result::Scope,
                                  Flex::Result::ActiveModel ]
 Flex::Conf.flex_models = []
