@@ -11,23 +11,43 @@ module Flex
 
     module DocumentLoader
 
+      module ModelClasses
+        extend self
+        # maps all the index/types to the ruby class
+        def map
+          @map ||= begin
+                     map = {}
+                     Conf.flex_models.each do |m|
+                       m = eval("::#{m}") if m.is_a?(String)
+                       indices = m.flex.index.is_a?(Array) ? m.flex.index : [m.flex.index]
+                       types = m.flex.type.is_a?(Array) ? m.flex.type : [m.flex.type]
+                       indices.each do |i|
+                         types.each { |t| map["#{i}/#{t}"] = m }
+                       end
+                     end
+                     map
+                   end
+        end
+      end
+
       # extend if result has a structure like a document
       def self.should_extend?(obj)
         %w[_index _type _id].all? {|k| obj.has_key?(k)}
       end
 
-      def mapped_class(should_raise=false)
-        @mapped_class ||= Manager.type_class_map["#{_index}/#{_type}"]
+      def model_class(should_raise=false)
+        @model_class ||= ModelClasses.map["#{_index}/#{_type}"]
       rescue NameError
         raise DocumentMappingError, "the '#{_index}/#{_type}' document cannot be mapped to any class." \
               if should_raise
       end
 
       def load
-        mapped_class.find self['_id']
+        model_class.find self['_id']
       end
 
     end
 
   end
 end
+

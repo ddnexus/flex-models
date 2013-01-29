@@ -3,14 +3,13 @@ require 'flex/scopes'
 require 'active_attr'
 
 require 'flex/struct/mergeable'
+
 require 'flex/class_proxy/model_indexer'
 require 'flex/class_proxy/model_syncer'
 
 require 'flex/instance_proxy/base'
 require 'flex/instance_proxy/model_indexer'
 require 'flex/instance_proxy/model_syncer'
-
-require 'flex/manager'
 
 require 'flex/model_syncer'
 require 'flex/model_indexer'

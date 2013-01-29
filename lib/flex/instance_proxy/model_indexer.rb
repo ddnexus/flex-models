@@ -66,7 +66,7 @@ module Flex
       end
 
       def is_parent?
-        @is_parent ||= Manager.parent_types.include?(type)
+        @is_parent ||= class_flex.is_parent?
       end
 
       def metainfo
