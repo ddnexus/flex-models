@@ -47,13 +47,13 @@ module Flex
           unless deleted.include?(index)
             delete_index(index)
             deleted << index
-            puts "#{index} index deleted"
+            puts "#{index} index deleted" if options[:verbose]
           end
         end
 
         unless exist?(index)
           create(index)
-          puts "#{index} index created"
+          puts "#{index} index created" if options[:verbose]
         end
 
         if defined?(Mongoid::Document) && klass.include?(Mongoid::Document)
@@ -82,17 +82,26 @@ module Flex
     end
 
     def config_hash
-      @config_hash ||= Manager.default_mapping.deep_merge(super)
+      @config_hash ||= begin
+                         default = {}.extend Struct::Mergeable
+                         Conf.flex_models.each do |m|
+                           m = eval"::#{m}" if m.is_a?(String)
+                           default.deep_merge! m.flex.get_default_mapping
+                         end
+                         default.deep_merge(super)
+                       end
     end
 
     private
 
     def models
-      @models ||= ( models = options[:models] || Conf.flex_models
+      @models ||= begin
+                    models = options[:models] || Conf.flex_models
                     raise ArgumentError, 'no class defined. Please use MODELS=ClassA,ClassB ' +
                                          'or set the Flex::Configuration.flex_models properly' \
                                          if models.nil? || models.empty?
-                    models.map{|c| c.is_a?(String) ? eval("::#{c}") : c} )
+                    models.map{|c| c.is_a?(String) ? eval("::#{c}") : c}
+                  end
     end
 
   end

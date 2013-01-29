@@ -2,9 +2,15 @@ module Flex
   class Result
     module ActiveModel
 
+      include Flex::Result::Scope
+
+      # extend if the context include a Flex::ActiveModel
+      def self.should_extend?(result)
+       result.variables[:context].include?(Flex::ActiveModel)
+      end
+
       # super is from flex-scopes
       def get_docs
-        return super unless variables[:context].include?(Flex::ActiveModel)
         freeze = !!variables[:params][:fields]
         docs = super
         if docs.is_a?(Array)

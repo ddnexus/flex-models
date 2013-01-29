@@ -1,6 +1,12 @@
 module Flex
   module InstanceProxy
-    class ModelIndexer < Base
+    class ModelIndexer < ModelSyncer
+
+      # delegates :index, :is_child?, :is_parent? to class_flex
+      Utils.define_delegation :to  => :class_flex,
+                              :in  => self,
+                              :by  => :module_eval,
+                              :for => [:index, :is_child?, :is_parent?]
 
       # indexes the document
       # usually called from after_save, you can eventually call it explicitly for example from another callback
@@ -46,10 +52,6 @@ module Flex
         @type ||= is_child? ? class_flex.parent_child_map[parent_instance.flex.type] : class_flex.type
       end
 
-      def index
-        class_flex.index
-      end
-
       def id
         instance.id.to_s
       end
@@ -59,14 +61,6 @@ module Flex
                      when is_child?  then parent_instance(raise).flex.routing
                      when is_parent? then create_routing
                      end
-      end
-
-      def is_child?
-        @is_child ||= class_flex.is_child?
-      end
-
-      def is_parent?
-        @is_parent ||= Manager.parent_types.include?(type)
       end
 
       def metainfo
