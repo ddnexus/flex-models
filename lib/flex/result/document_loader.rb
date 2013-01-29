@@ -31,8 +31,8 @@ module Flex
       end
 
       # extend if result has a structure like a document
-      def self.should_extend?(obj)
-        %w[_index _type _id].all? {|k| obj.has_key?(k)}
+      def self.should_extend?(result)
+        result.is_a? Document
       end
 
       def model_class(should_raise=false)

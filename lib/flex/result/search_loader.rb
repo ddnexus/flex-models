@@ -4,7 +4,7 @@ module Flex
 
       # extend if result comes from a search url
       def self.should_extend?(result)
-        result['hits'] && result['hits']['hits']
+        result.is_a? Search
       end
 
       # extend the hits results on extended
