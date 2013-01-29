@@ -30,7 +30,7 @@ module Flex
       end
 
       def is_parent?
-        Types.parents.include?(type)
+        @is_parent ||= Types.parents.include?(type)
       end
 
       def get_default_mapping
