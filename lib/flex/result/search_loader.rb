@@ -7,6 +7,11 @@ module Flex
         result['hits'] && result['hits']['hits']
       end
 
+      # extend the hits results on extended
+      def self.extended(result)
+        result['hits']['hits'].each { |h| h.extend(DocumentLoader) }
+      end
+
       def loaded_collection
         @loaded_collection ||= begin
                                  records  = []
