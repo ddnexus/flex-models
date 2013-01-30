@@ -11,8 +11,6 @@ module Flex
 
       attr_reader :parent_association, :parent_child_map
 
-      include CommonVars
-
       def init
         variables.deep_merge! :type  => Utils.class_name_to_type(context.name)
       end
