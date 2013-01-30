@@ -25,7 +25,7 @@ require 'flex/result/document_loader'
 require 'flex/result/search_loader'
 require 'flex/result/active_model'
 
-Flex::LIB_PATHS << __FILE__.sub(/flex-model.rb$/, '')
+Flex::LIB_PATHS << File.dirname(__FILE__)
 
 # get_docs calls super so we make sure the result is extended by Scope first
 Flex::Conf.result_extenders |= [ Flex::Result::DocumentLoader,
