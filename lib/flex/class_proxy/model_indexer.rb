@@ -31,7 +31,7 @@ module Flex
         @is_parent ||= Types.parents.include?(type)
       end
 
-      def get_default_mapping
+      def default_mapping
         default = {}.extend Struct::Mergeable
         if is_child?
           parent_child_map.each do |parent, child|

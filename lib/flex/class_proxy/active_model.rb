@@ -6,7 +6,7 @@ module Flex
         variables.deep_merge! *vars
       end
 
-      def get_default_mapping
+      def default_mapping
         props = { }
         context.attributes.each do |name, attr|
           options     = attr.send(:options)
