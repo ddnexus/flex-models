@@ -1,6 +1,22 @@
 require 'flex/tasks'
 
 module Flex
+
+  class Tasks
+    # patches the Flex::Tasks#config_hash so it evaluates also the default mapping for models
+    alias_method :original_config_hash, :config_hash
+    def config_hash
+      @config_hash ||= begin
+                         default = {}.extend Struct::Mergeable
+                         Conf.flex_models.each do |m|
+                           m = eval"::#{m}" if m.is_a?(String)
+                           default.deep_merge! m.flex.default_mapping
+                         end
+                         default.deep_merge(original_config_hash)
+                       end
+    end
+  end
+
   class ModelTasks < Flex::Tasks
 
     attr_reader :options
