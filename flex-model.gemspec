@@ -22,5 +22,5 @@ Flex Plugin: allows to map any ActiveRecord or Mongoid model structure to any El
   s.add_runtime_dependency 'flex-model',  version
 
 
-  s.add_runtime_dependency 'active_attr', '~> 0.6.0'
+  s.add_runtime_dependency 'active_attr', '>= 0.6.0', '~> 0.7.0'
 end
