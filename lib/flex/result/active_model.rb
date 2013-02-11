@@ -13,6 +13,7 @@ module Flex
       def get_docs
         freeze = !!variables[:params][:fields]
         docs = super
+        return docs if variables[:raw_result]
         if docs.is_a?(Array)
           res = docs.map {|d| build_object(d, freeze)}
           res.extend Struct::Paginable
