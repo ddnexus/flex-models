@@ -1,7 +1,7 @@
 module Flex
   module ActiveModel
 
-    attr_reader :_version, :_id
+    attr_reader :_version, :_id, :highlight, :raw_result
     alias_method :id, :_id
 
     def self.included(base)
@@ -35,6 +35,10 @@ module Flex
 
     def flex_indexable?
       true
+    end
+
+    def attribute_readers
+      @attribute_readers ||= []
     end
 
   end
