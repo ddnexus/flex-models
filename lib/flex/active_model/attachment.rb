@@ -6,6 +6,11 @@ module Flex
       # defines accessors for <attachment_field_name>
       # if you omit the arguments it uses :attachment as the <attachment_field_name>
       # you can also pass other properties that will be merged with the default property for attachment
+      # this will automatically add a :with_<attachment_field_name>_fields scope which will add
+      # all the meta fields (title, author, ...) to the returned fields, exluding the <attachment_field_name> field itself
+      # and including all the other attributes declared before it. For that reason you may want to declare it as
+      # the latest attribute.
+
       def attribute_attachment(*args)
         name  = args.first.is_a?(Symbol) ? args.shift : :attachment
         props = {:properties => { 'type'   => 'attachment',
@@ -20,6 +25,15 @@ module Flex
                                 }
                 }
         props.extend(Struct::Mergeable).deep_merge! args.first if args.first.is_a?(Hash)
+
+        scope :"with_#{name}_fields", fields('attachment.title',
+                                             'attachment.author',
+                                             'attachment.name',
+                                             'attachment.title',
+                                             'attachment.content_type',
+                                             'attachment.date',
+                                             'attachment.keywords',
+                                             *attributes.keys)
         attribute name, props
       end
 
