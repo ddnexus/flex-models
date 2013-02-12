@@ -22,6 +22,7 @@ module Flex
         extend  Storage::ClassMethods
         include Inspection
         extend  Timestamps
+        extend  Attachment
       end
     end
 

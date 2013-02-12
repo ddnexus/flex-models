@@ -13,6 +13,7 @@ require 'flex/instance_proxy/model_indexer'
 require 'flex/model_indexer'
 
 require 'flex/active_model/timestamps'
+require 'flex/active_model/attachment'
 require 'flex/active_model/inspection'
 require 'flex/active_model/storage'
 require 'flex/class_proxy/active_model'
