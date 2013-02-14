@@ -1,7 +1,7 @@
 module Flex
   module ActiveModel
 
-    attr_reader :_version, :_id
+    attr_reader :_version, :_id, :highlight, :raw_result
     alias_method :id, :_id
 
     def self.included(base)
@@ -22,6 +22,7 @@ module Flex
         extend  Storage::ClassMethods
         include Inspection
         extend  Timestamps
+        extend  Attachment
       end
     end
 
@@ -35,6 +36,10 @@ module Flex
 
     def flex_indexable?
       true
+    end
+
+    def attribute_readers
+      @attribute_readers ||= []
     end
 
   end
