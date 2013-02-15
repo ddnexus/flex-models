@@ -1,7 +1,7 @@
 module Flex
   module ActiveModel
 
-    attr_reader :_version, :_id, :highlight, :raw_result
+    attr_reader :_version, :_id, :highlight
     alias_method :id, :_id
 
     def self.included(base)
@@ -40,6 +40,10 @@ module Flex
 
     def attribute_readers
       @attribute_readers ||= []
+    end
+
+    def method_missing(meth, *args, &block)
+      raw_document.respond_to?(meth) ? raw_document.send(meth) : super
     end
 
   end
