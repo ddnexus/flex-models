@@ -19,6 +19,7 @@ module Flex
           res.extend(Struct::Paginable).setup(docs.size, variables)
           class << res; self end.class_eval do
             define_method(:raw_result){ raw_result }
+            define_method(:facets){ raw_result.facets }
           end
           res
         else
