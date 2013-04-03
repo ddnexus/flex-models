@@ -6,7 +6,7 @@ module Flex
 
       # extend if the context include a Flex::ActiveModel
       def self.should_extend?(result)
-       result.variables[:context].include?(Flex::ActiveModel)
+        result.variables[:context] && result.variables[:context].include?(Flex::ActiveModel)
       end
 
       def get_docs
