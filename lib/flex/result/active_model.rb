@@ -16,10 +16,11 @@ module Flex
         raw_result = self
         if docs.is_a?(Array)
           res = docs.map {|doc| build_object(doc)}
-          res.extend(Struct::Paginable).setup(docs.size, variables)
+          res.extend(Struct::Paginable).setup(raw_result['hits']['total'], variables)
           class << res; self end.class_eval do
             define_method(:raw_result){ raw_result }
             define_method(:facets){ raw_result.facets }
+            define_method(:collection){ self }
           end
           res
         else
