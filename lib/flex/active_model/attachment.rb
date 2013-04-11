@@ -26,13 +26,12 @@ module Flex
                 }
         props.extend(Struct::Mergeable).deep_merge! args.first if args.first.is_a?(Hash)
 
-        scope :"with_#{name}_fields", fields('attachment.title',
-                                             'attachment.author',
-                                             'attachment.name',
-                                             'attachment.title',
-                                             'attachment.content_type',
-                                             'attachment.date',
-                                             'attachment.keywords',
+        scope :"with_#{name}_fields", fields("#{name}.title",
+                                             "#{name}.author",
+                                             "#{name}.name",
+                                             "#{name}.content_type",
+                                             "#{name}.date",
+                                             "#{name}.keywords",
                                              *attributes.keys)
         attribute name, props
       end
