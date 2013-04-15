@@ -20,7 +20,7 @@ module Flex
           class << res; self end.class_eval do
             define_method(:raw_result){ raw_result }
             define_method(:method_missing) do |meth, *args, &block|
-              super unless raw_result.respond_to?(meth)
+              super(*args, &block) unless raw_result.respond_to?(meth)
               raw_result.send(meth, *args, &block)
             end
           end
