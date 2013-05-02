@@ -40,7 +40,13 @@ module Flex
           class << self; self end.class_eval do
             define_method(:raw_result){ raw_result }
             define_method(:raw_document){ doc }
-          end
+            define_method(:respond_to?) do |*args|
+              doc.respond_to?(*args) || super(*args)
+            end
+            define_method(:method_missing) do |meth, *args, &block|
+              super(*args, &block) unless respond_to?(meth)
+              doc.send(meth, *args, &block)
+            end          end
           @_id        = doc['_id']
           @_version   = doc['_version']
           @highlight  = doc['highlight']
