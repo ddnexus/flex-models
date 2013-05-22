@@ -38,10 +38,6 @@ module Flex
       true
     end
 
-    def attribute_readers
-      @attribute_readers ||= []
-    end
-
     def method_missing(meth, *args, &block)
       raw_document.respond_to?(meth) ? raw_document.send(meth) : super
     end
