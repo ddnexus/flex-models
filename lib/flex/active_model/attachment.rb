@@ -6,7 +6,7 @@ module Flex
       # defines accessors for <attachment_field_name>
       # if you omit the arguments it uses :attachment as the <attachment_field_name>
       # you can also pass other properties that will be merged with the default property for attachment
-      # this will automatically add a :with_<attachment_field_name>_fields scope which will add
+      # this will automatically add a :<attachment_field_name>_scope scope which will add
       # all the meta fields (title, author, ...) to the returned fields, exluding the <attachment_field_name> field itself
       # and including all the other attributes declared before it. For that reason you may want to declare it as
       # the latest attribute.
@@ -34,6 +34,7 @@ module Flex
                                        "#{name}.keywords",
                                        *attributes.keys)
         attribute name, props
+
       end
 
     end
