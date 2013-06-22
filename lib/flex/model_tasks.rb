@@ -8,7 +8,7 @@ module Flex
     def config_hash
       @config_hash ||= begin
                          default = {}.extend Struct::Mergeable
-                         Conf.flex_models.each do |m|
+                         (Conf.flex_models + Conf.flex_active_models).each do |m|
                            m = eval"::#{m}" if m.is_a?(String)
                            default.deep_merge! m.flex.default_mapping
                          end
