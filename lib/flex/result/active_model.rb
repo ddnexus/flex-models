@@ -20,8 +20,7 @@ module Flex
           class << res; self end.class_eval do
             define_method(:raw_result){ raw_result }
             define_method(:method_missing) do |meth, *args, &block|
-              super(meth, *args, &block) unless raw_result.respond_to?(meth)
-              raw_result.send(meth, *args, &block)
+              raw_result.respond_to?(meth) ? raw_result.send(meth, *args, &block) : super(meth, *args, &block)
             end
           end
           res
@@ -44,9 +43,9 @@ module Flex
               doc.respond_to?(*args) || super(*args)
             end
             define_method(:method_missing) do |meth, *args, &block|
-              super(meth, *args, &block) unless respond_to?(meth)
-              doc.send(meth, *args, &block)
-            end          end
+              doc.respond_to?(meth) ? doc.send(meth, *args, &block) : super(meth, *args, &block)
+            end
+          end
           @_id        = doc['_id']
           @_version   = doc['_version']
           @highlight  = doc['highlight']
