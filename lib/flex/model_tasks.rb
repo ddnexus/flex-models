@@ -26,7 +26,6 @@ module Flex
 
       options[:timeout]    = options[:timeout].to_i      if options[:timeout]
       options[:batch_size] = options[:batch_size].to_i   if options[:batch_size]
-      options[:index]      = options[:index].split(',')  if options[:index]
       options[:models]     = options[:models].split(',') if options[:models]
 
       if options[:import_options]
@@ -46,7 +45,6 @@ module Flex
                              :timeout        => 20,
                              :batch_size     => 1000,
                              :import_options => { },
-                             :index          => Conf.variables[:index],
                              :models         => Conf.flex_models,
                              :config_file    => Conf.config_file,
                              :verbose        => true }
@@ -57,7 +55,6 @@ module Flex
       deleted = []
       models.each do |klass|
         index = klass.flex.index
-        next unless options[:index].include?(index)
 
         if options[:force]
           unless deleted.include?(index)
@@ -85,15 +82,16 @@ module Flex
           next
         end
 
-        pbar = ProgBar.new(klass.count, options[:batch_size], "Class #{klass}: ")
+        pbar = ProgBar.new(klass.count, options[:batch_size], "Class #{klass}: ") if options[:verbose]
+
+        opts = {:index => index}.merge(options[:import_options])
 
         klass.find_in_batches(:batch_size => options[:batch_size]) do |array|
-          opts   = {:index => index}.merge(options[:import_options])
           result = Flex.import_collection(array, opts) || next
-          pbar.process_result(result, array.size)
+          pbar.process_result(result, array.size) if options[:verbose]
         end
 
-        pbar.finish
+        pbar.finish if options[:verbose]
       end
     end
 
