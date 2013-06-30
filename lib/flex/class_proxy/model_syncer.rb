@@ -6,8 +6,10 @@ module Flex
 
       def sync(*synced)
         # Flex::ActiveModel has its own way of syncing, and a Flex::ModelSyncer cannot be synced by itself
-        if synced.any?{|s| s == context} && (context.include?(Flex::ActiveModel) || !context.include?(Flex::ModelIndexer))
-          raise ArgumentError, %(You cannot flex.sync(self) #{context}.)
+        raise ArgumentError, %(You cannot flex.sync(self) #{context}.) \
+              if synced.any?{|s| s == context} && (context.include?(Flex::ActiveModel) || !context.include?(Flex::ModelIndexer))
+        synced.each do |s|
+          s == context || s.is_a?(Symbol) || s.is_a?(String) || raise(ArgumentError, "self, string or symbol expected, got #{s.inspect}")
         end
         @synced = synced
         context.class_eval do
