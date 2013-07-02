@@ -17,7 +17,7 @@ module Flex
         def map
           @map ||= begin
                      map = {}
-                     Conf.flex_models.each do |m|
+                     (Conf.flex_models + Conf.flex_active_models).each do |m|
                        m = eval("::#{m}") if m.is_a?(String)
                        indices = m.flex.index.is_a?(Array) ? m.flex.index : [m.flex.index]
                        types = m.flex.type.is_a?(Array) ? m.flex.type : [m.flex.type]
