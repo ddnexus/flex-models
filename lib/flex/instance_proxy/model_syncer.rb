@@ -10,8 +10,8 @@ module Flex
       end
 
       def sync(*trail)
-        return if trail.include?(self) || class_flex.synced.nil?
-        trail << self
+        return if trail.include?(uid) || class_flex.synced.nil?
+        trail << uid
         class_flex.synced.each do |synced|
           case
           # sync self
@@ -36,6 +36,10 @@ module Flex
             raise ArgumentError, "self, string or symbol expected, got #{synced.inspect}"
           end
         end
+      end
+
+      def uid
+        @uid ||= [instance.class, instance.id].join('-')
       end
 
       def refresh_index
