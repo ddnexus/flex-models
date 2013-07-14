@@ -15,11 +15,10 @@ module Flex
         class_flex.synced.each do |synced|
           case
           # sync self
-          # only called for Flex::ModelIndexer
           when synced == instance.class
-            instance.destroyed? ? remove : store
+            sync_self
           # sync :author, :comments
-          # works for all association types, if the instances have a #flex proxy (i.e. Flex::Models)
+          # works for all association types, if the instances have a #flex proxy
           when synced.is_a?(Symbol)
             to_sync = instance.send(synced)
             if to_sync.respond_to?(:each)
@@ -44,6 +43,10 @@ module Flex
 
       def refresh_index
         class_flex.refresh_index
+      end
+
+      def sync_self
+        # nothing to sync, since a ModelSyncer cannot sync itselfs
       end
 
     end

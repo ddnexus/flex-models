@@ -4,8 +4,8 @@ module Flex
     def self.included(base)
       base.class_eval do
         @flex ||= ClassProxy::Base.new(base)
-        @flex.extend(ClassProxy::ModelIndexer).init
         @flex.extend(ClassProxy::ModelSyncer)
+        @flex.extend(ClassProxy::ModelIndexer).init
         def self.flex; @flex end
       end
     end

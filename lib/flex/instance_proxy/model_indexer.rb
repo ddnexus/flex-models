@@ -84,6 +84,10 @@ module Flex
         meta
       end
 
+      def sync_self
+        instance.destroyed? ? remove : store
+      end
+
       private
 
       BASE62_DIGITS = ('0'..'9').to_a + ('A'..'Z').to_a + ('a'..'z').to_a

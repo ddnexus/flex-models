@@ -25,6 +25,11 @@ module Flex
         props.empty? ? super :  super.deep_merge(index => {'mappings' => {type => {'properties' => props}}})
       end
 
+      # overrides the ModelSyncer#add_callbacks
+      def add_callbacks
+        # no callbacks to add, since it calls flex.sync on save and destroy
+      end
+
     end
   end
 end
