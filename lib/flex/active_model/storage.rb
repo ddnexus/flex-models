@@ -1,13 +1,16 @@
 module Flex
   module ActiveModel
+
+    class DocumentInvalid < StandardError; end
+
     module Storage
 
       module ClassMethods
 
-        def create(args={}, vars={})
+        def create(args={})
           document = new(args)
           return false unless document.valid?
-          document.save(vars)
+          document.save
         end
 
       end
@@ -22,17 +25,17 @@ module Flex
           @_version       = document['_version']
         end
 
-        def save(vars={})
-          return false unless valid?
-          run_callbacks :save do
-            run_callbacks(new_record? ? :create : :update) { do_save(vars) }
-          end
-          self
+        def save(options={})
+          perform_validations(options) ? do_save : false
+        end
+
+        def save!(options={})
+          perform_validations(options) ? do_save : raise(DocumentInvalid, errors.full_messages.join(", "))
         end
 
         # Optimistic Lock Update
         #
-        #    doc.lock_update do |d|
+        #    doc.safe_update do |d|
         #      d.amount += 100
         #    end
         #
@@ -40,38 +43,32 @@ module Flex
         # document is saved only when it is not stale anymore (i.e. the _version has not changed since it has been loaded)
         # read: http://www.elasticsearch.org/blog/2011/02/08/versioning.html
         #
-        def lock_update(vars={})
-          return false unless valid?
-          run_callbacks :save do
-            run_callbacks :update do
-              begin
-                yield self
-                result = flex.store({:params => {:version => _version}}.merge(vars))
-              rescue Flex::HttpError => e
-                if e.status == 409
-                  reload
-                  retry
-                else
-                  raise
-                end
-              end
-            end
-            @_id      = result['_id']
-            @_version = result['_version']
-          end
-          self
+        def safe_update(options={}, &block)
+          perform_validations(options) ? lock_update(&block) : false
+        end
+
+        def safe_update!(options={}, &block)
+          perform_validations(options) ? lock_update(&block) : raise(DocumentInvalid, errors.full_messages.join(", "))
+        end
+
+        def valid?(context = nil)
+          context ||= (new_record? ? :create : :update)
+          output = super(context)
+          errors.empty? && output
         end
 
         def destroy
-          run_callbacks :destroy do
-            flex.remove
-            @destroyed = true
-          end
+          @destroyed = true
+          flex.sync
           self.freeze
         end
 
-        def update_attributes(attributes)
+        def merge_attributes(attributes)
           attributes.each {|name, value| send "#{name}=", value }
+        end
+
+        def update_attributes(attributes)
+          merge_attributes(attributes)
           save
         end
 
@@ -89,10 +86,31 @@ module Flex
 
       private
 
-        def do_save(vars)
-          result    = flex.store(vars)
-          @_id      = result['_id']
-          @_version = result['_version']
+        def do_save
+          flex.sync
+          self
+        end
+
+        def lock_update
+          begin
+            yield self
+            flex.sync
+          rescue Flex::HttpError => e
+            if e.status == 409
+              reload
+              retry
+            else
+              raise
+            end
+          end
+          self
+        end
+
+      protected
+
+        def perform_validations(options={})
+          perform_validation = options[:validate] != false
+          perform_validation ? valid?(options[:context]) : true
         end
 
       end
