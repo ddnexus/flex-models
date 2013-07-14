@@ -6,7 +6,7 @@ module Flex
       Utils.define_delegation :to  => :class_flex,
                               :in  => self,
                               :by  => :module_eval,
-                              :for => [:index, :is_child?, :is_parent?]
+                              :for => [:is_child?, :is_parent?]
 
       # indexes the document
       # usually called from after_save, you can eventually call it explicitly for example from another callback
@@ -48,9 +48,15 @@ module Flex
         end
       end
 
+      def index
+        @index ||= class_flex.index
+      end
+      attr_writer :index
+
       def type
         @type ||= is_child? ? class_flex.parent_child_map[parent_instance.flex.type] : class_flex.type
       end
+      attr_writer :type
 
       def id
         instance.id.to_s
@@ -62,12 +68,18 @@ module Flex
                      when is_parent? then create_routing
                      end
       end
+      attr_writer :routing
+
+      def parent
+        @parent ||= is_child? ? parent_instance.id.to_s : nil
+      end
+      attr_writer :parent
 
       def metainfo
         meta = Vars.new( :index => index, :type => type, :id => id )
         params = {}
         params[:routing] = routing if routing
-        params[:parent]  = parent_instance.id.to_s if is_child?
+        params[:parent]  = parent  if parent
         meta.merge!(:params => params) unless params.empty?
         meta
       end
