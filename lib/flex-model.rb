@@ -26,11 +26,13 @@ require 'flex/result/document_loader'
 require 'flex/result/search_loader'
 require 'flex/result/active_model'
 
+require 'flex/model_tasks'
+
 Flex::LIB_PATHS << File.dirname(__FILE__)
 
 # get_docs calls super so we make sure the result is extended by Scope first
-Flex::Conf.result_extenders |= [ Flex::Result::DocumentLoader,
-                                 Flex::Result::SearchLoader,
-                                 Flex::Result::ActiveModel ]
-Flex::Conf.flex_models = []
+Flex::Conf.result_extenders  |= [ Flex::Result::DocumentLoader,
+                                  Flex::Result::SearchLoader,
+                                  Flex::Result::ActiveModel ]
+Flex::Conf.flex_models        = []
 Flex::Conf.flex_active_models = []
