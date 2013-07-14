@@ -22,6 +22,8 @@ require 'flex/active_model'
 
 require 'flex/refresh_callbacks'
 
+require 'flex/live_reindex'
+
 require 'flex/result/document_loader'
 require 'flex/result/search_loader'
 require 'flex/result/active_model'
@@ -36,3 +38,4 @@ Flex::Conf.result_extenders  |= [ Flex::Result::DocumentLoader,
                                   Flex::Result::ActiveModel ]
 Flex::Conf.flex_models        = []
 Flex::Conf.flex_active_models = []
+Flex::Conf.redis              = $redis || defined?(::Redis) && ::Redis.current

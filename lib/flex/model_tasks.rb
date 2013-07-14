@@ -58,7 +58,11 @@ module Flex
         raise AttributeError, "The model #{model.name} is not a standard Flex::ModelIndexer model" \
               unless model.is_a?(Flex::ModelIndexer)
         index = model.flex.index
+        if defined?(LiveReindex) && options[:import_options][:reindexing]
+          index = LiveReindex.prefix_index(index)
+        end
 
+        # block never called during live-reindex, since it doesn't exist
         if options[:force]
           unless deleted.include?(index)
             delete_index(index)
@@ -67,6 +71,7 @@ module Flex
           end
         end
 
+        # block never called during live-reindex, since prefix_index creates it
         unless exist?(index)
           create(index)
           puts "#{index} index created" if options[:verbose]
