@@ -4,6 +4,7 @@ module Flex
 
   class Tasks
     # patches the Flex::Tasks#config_hash so it evaluates also the default mapping for models
+    # it modifies also the index:create task
     alias_method :original_config_hash, :config_hash
     def config_hash
       @config_hash ||= begin
@@ -53,8 +54,10 @@ module Flex
     def import_models
       Conf.http_client.options[:timeout] = options[:timeout]
       deleted = []
-      models.each do |klass|
-        index = klass.flex.index
+      models.each do |model|
+        raise AttributeError, "The model #{model.name} is not a standard Flex::ModelIndexer model" \
+              unless model.is_a?(Flex::ModelIndexer)
+        index = model.flex.index
 
         if options[:force]
           unless deleted.include?(index)
@@ -69,26 +72,24 @@ module Flex
           puts "#{index} index created" if options[:verbose]
         end
 
-        if defined?(Mongoid::Document) && klass.include?(Mongoid::Document)
-          def klass.find_in_batches(options={})
+        if defined?(Mongoid::Document) && model.include?(Mongoid::Document)
+          def model.find_in_batches(options={})
             0.step(count, options[:batch_size]) do |offset|
               yield limit(options[:batch_size]).skip(offset).to_a
             end
           end
         end
 
-        unless klass.respond_to?(:find_in_batches)
-          Conf.logger.error "Class #{klass} does not respond to :find_in_batches. Skipped."
+        unless model.respond_to?(:find_in_batches)
+          Conf.logger.error "Model #{model} does not respond to :find_in_batches. Skipped."
           next
         end
 
-        pbar = ProgBar.new(klass.count, options[:batch_size], "Class #{klass}: ") if options[:verbose]
+        pbar = ProgBar.new(model.count, options[:batch_size], "Model #{model}: ") if options[:verbose]
 
-        opts = {:index => index}.merge(options[:import_options])
-
-        klass.find_in_batches(:batch_size => options[:batch_size]) do |array|
-          result = Flex.import_collection(array, opts) || next
-          pbar.process_result(result, array.size) if options[:verbose]
+        model.find_in_batches(:batch_size => options[:batch_size]) do |batch|
+          result = Flex.post_bulk_collection(batch, options[:import_options]) || next
+          pbar.process_result(result, batch.size) if options[:verbose]
         end
 
         pbar.finish if options[:verbose]
