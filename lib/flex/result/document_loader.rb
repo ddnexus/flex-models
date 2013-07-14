@@ -46,6 +46,10 @@ module Flex
         model_class.find self['_id']
       end
 
+      def load!
+        model_class(true).find self['_id']
+      end
+
     end
 
   end
