@@ -32,6 +32,12 @@ module Flex
         Flex.get(metainfo, *vars)
       end
 
+      # like get, but it returns all the fields after a refresh
+      def full_get(*vars)
+        return unless instance.flex_indexable?
+        Flex.search_by_id(metainfo, {:refresh => true, :params => {:fields => '*,_source'}}, *vars)
+      end
+
       def parent_instance(raise=true)
         return unless is_child?
         @parent_instance ||= instance.send(class_flex.parent_association) || raise &&
