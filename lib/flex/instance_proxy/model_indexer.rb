@@ -55,29 +55,38 @@ module Flex
       end
 
       def index
-        @index ||= class_flex.index
+        @index ||= instance.respond_to?(:flex_index) ? instance.flex_index : class_flex.index
       end
       attr_writer :index
 
       def type
-        @type ||= is_child? ? class_flex.parent_child_map[parent_instance.flex.type] : class_flex.type
+        @type ||= case
+                  when instance.respond_to?(:flex_type) then instance.flex_type
+                  when is_child?                        then class_flex.parent_child_map[parent_instance.flex.type]
+                  else                                       class_flex.type
+                  end
       end
       attr_writer :type
 
       def id
-        instance.id.to_s
+        @id ||= instance.respond_to?(:flex_id) ? instance.flex_id : instance.id.to_s
       end
 
       def routing(raise=true)
         @routing ||= case
-                     when is_child?  then parent_instance(raise).flex.routing
-                     when is_parent? then create_routing
+                     when instance.respond_to?(:flex_routing) then instance.flex_routing
+                     when is_child?                           then parent_instance(raise).flex.routing
+                     when is_parent?                          then create_routing
                      end
       end
       attr_writer :routing
 
       def parent
-        @parent ||= is_child? ? parent_instance.id.to_s : nil
+        @parent ||= case
+                    when instance.respond_to?(:flex_parent) then instance.flex_parent
+                    when is_child?                          then parent_instance.id.to_s
+                    else nil
+                    end
       end
       attr_writer :parent
 
