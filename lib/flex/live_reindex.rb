@@ -114,13 +114,15 @@ module Flex
       !! index =~ /^#{@timestamp}/
     end
 
-    def track_change(change, data)
-      Redis.rpush(:changes, MutliJson.encode([change, data]))
+    def track_change(action, document)
+      Redis.rpush(:changes, MutliJson.encode([action, document]))
     end
 
-    def track_external_change(app_id, change, data)
+    # use this method when you are tracking the change of another app
+    # you must pass the app_id of the app being affected by the change
+    def track_external_change(app_id, action, document)
       return unless Conf.redis
-      Conf.redis.rpush("#{KEYS[:changes]}-#{app_id}", MutliJson.encode([change, data]))
+      Conf.redis.rpush("#{KEYS[:changes]}-#{app_id}", MutliJson.encode([action, document]))
     end
 
     def prefix_index(index)
@@ -185,7 +187,7 @@ module Flex
         bulk_string = ''
         tries += 1
       end
-      # at this point the changes list should be empty or contain the minimum number of changes we could acieve live
+      # at this point the changes list should be empty or contain the minimum number of changes we could achieve live
       # the :stop_indexing_proc should ensure to stop/suspend all the actions that would produce changes in the indices being reindexed,
       # flush and wait a couple of secs maybe; pass nil if your index is not updated live by any other process
       stop_indexing_proc.call unless stop_indexing_proc.nil?
@@ -231,7 +233,6 @@ module Flex
       pbar = ProgBar.new(Flex.count(opts)['count'], nil, "index #{opts[:index].inspect}: ") if opts[:verbose]
 
       Flex.dump_all(opts) do |batch|
-        batch.map!{|doc| doc.delete('_score'); doc}
         result = process_and_post_batch(batch)
         pbar.process_result(result, batch.size) if opts[:verbose]
       end
@@ -239,21 +240,21 @@ module Flex
       pbar.finish if opts[:verbose]
     end
 
-    def build_bulk_string_from_change(change)
-      action, document = MultiJson.decode(change)
-      return '' unless @indices.include?(unprefix_index(document['_index']))
-      build_bulk_string_from_action_doc(action, document)
-    end
-
     def process_and_post_batch(batch)
       bulk_string = ''
       batch.each do |document|
-        bulk_string << build_bulk_string_from_action_doc('index', document)
+        bulk_string << build_bulk_string('index', document)
       end
       Flex.post_bulk_string(:bulk_string => bulk_string)
     end
 
-    def build_bulk_string_from_action_doc(action, document)
+    def build_bulk_string_from_change(change)
+      action, document = MultiJson.decode(change)
+      return '' unless @indices.include?(unprefix_index(document['_index']))
+      build_bulk_string(action, document)
+    end
+
+    def build_bulk_string(action, document)
       result = @migrate_block ? @migrate_block.call(action, document.extend(RawDocument)) : [{action=>document}]
       result = [result] unless result.is_a?(Array)
       bulk_string = ''
