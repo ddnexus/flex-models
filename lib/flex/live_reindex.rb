@@ -72,24 +72,20 @@ module Flex
     end
 
     def migrate_active_models(opts={}, &block)
-      @migrate_block = block
-      opts[:verbose] ||= true
-      opts[:models]  ||= Conf.flex_active_models
+      @migrate_block  = block
+      opts[:verbose]  = true unless opts.has_key?(:verbose)
+      opts[:models] ||= Conf.flex_active_models
       transaction(opts) do
         opts[:models].each do |model|
           model = eval("::#{model}") if model.is_a?(String)
-          raise AttributeError, "The model #{model.name} is not a standard Flex::ActiveModel model" \
-                unless model.is_a?(Flex::ActiveModel)
+          raise ArgumentError, "The model #{model.name} is not a standard Flex::ActiveModel model" \
+                unless model.include?(Flex::ActiveModel)
 
           pbar = ProgBar.new(model.count, nil, "Model #{model}: ") if opts[:verbose]
 
-          model.find_in_batches({:params => {:fields => '*,_source'}}, opts) do |batch|
-            if @migrate_block
-              batch.map! do |doc|
-                @migrate_block.call( 'index', doc.raw_document.extend(RawDocument) )
-              end
-            end
-            result  = Flex.post_bulk_collection(batch, opts.merge(:reindexing => true))
+          model.find_in_batches({:raw_result => true, :params => {:fields => '*,_source'}}, opts) do |result|
+            batch  = result['hits']['hits']
+            result = process_and_post_batch(batch)
             pbar.process_result(result, batch.size) if opts[:verbose]
           end
 
@@ -99,12 +95,12 @@ module Flex
       end
     end
 
-    def migrate_index(opts={}, &block)
-      @migrate_block   = block
-      opts[:verbose] ||= true
-      opts[:index]   ||= config_hash.keys
+    def migrate_indices(opts={}, &block)
+      @migrate_block = block
+      opts[:verbose] = true unless opts.has_key?(:verbose)
+      opts[:index] ||= opts.delete(:indices) || config_hash.keys
       transaction(opts) do
-        do_migrate_index(opts, &block)
+        do_migrate_indices(opts)
       end
     end
 
@@ -172,7 +168,11 @@ module Flex
       if opts[:ensure_indices]
         @ensure_indices = opts.delete(:ensure_indices)
         @ensure_indices = @ensure_indices.split(',') unless @ensure_indices.is_a?(Array)
-        do_migrate_index(:index => @ensure_indices) # no block, so verbatim copy into the new index
+        # no block, so verbatim copy into the new index
+        migrate_block = @migrate_block
+        @migrate_block = nil
+        do_migrate_indices(:index => @ensure_indices)
+        @migrate_block = migrate_block
       end
 
       yield
@@ -180,7 +180,7 @@ module Flex
       tries = 0
       bulk_string = ''
       until (count = Redis.llen(:changes)) == 0 || tries > 9
-        count.times { bulk_string << build_bulk_string(Redis.lpop(:changes))}
+        count.times { bulk_string << build_bulk_string_from_change(Redis.lpop(:changes))}
         Flex.post_bulk_string(:bulk_string => bulk_string)
         bulk_string = ''
         tries += 1
@@ -192,7 +192,7 @@ module Flex
       # if we have still changes, we can index them (until the list will be empty)
       bulk_string = ''
       while (change = Redis.lpop(:changes))
-        bulk_string << build_bulk_string(change)
+        bulk_string << build_bulk_string_from_change(change)
       end
       Flex.post_bulk_string(:bulk_string => bulk_string)
 
@@ -208,7 +208,7 @@ module Flex
       unless opts[:safe_reindex] == false
         class_eval <<-ruby, __FILE__, __LINE__
           def transaction(*)
-            raise MultipleReindexError, "Multiple live-reindex attempted! You cannot use any reindexing method multiple times in the same session or you will corrupt your index/indices! The previous reindexing in this session did successfully reindex and swap the new index/indices: #{@indices.map{|i| @timestamp + i}.join(', ')}. If the code-changes that you are about to deploy rely on the successive reindexings that have been aborted, your app may fail. You should complete the other reindexing in single successive deploys ASAP."
+            raise MultipleReindexError, "Multiple live-reindex attempted! You cannot use any reindexing method multiple times in the same session or you may corrupt your index/indices! The previous reindexing in this session did successfully reindex and swap the new index/indices: #{@indices.map{|i| @timestamp + i}.join(', ')}. If the code-changes that you are about to deploy rely on the successive reindexings that have been aborted, your app may fail. You should complete the other reindexing in single successive deploys ASAP. (If you are working in development mode - the next time - you can silence this error by passing :safe_reindex => false, but now you must restart the session.)"
           end
         ruby
       end
@@ -226,30 +226,38 @@ module Flex
     end
 
 
-    def do_migrate_index(opts, &block)
-      pbar = ProgBar.new(Flex.count(opts), nil, "index #{opts[:index].join(',')}: ") if opts[:verbose]
+    def do_migrate_indices(opts)
+      opts[:verbose] = true unless opts.has_key?(:verbose)
+      pbar = ProgBar.new(Flex.count(opts)['count'], nil, "index #{opts[:index].inspect}: ") if opts[:verbose]
 
       Flex.dump_all(opts) do |batch|
-        if block
-          batch.map! do |doc|
-            doc.delete('_score')
-            block.call( 'index', doc.extend(RawDocument) )
-          end
-        end
-        result = Flex.post_bulk_collection(batch, opts.merge(:reindexing => true))
+        batch.map!{|doc| doc.delete('_score'); doc}
+        result = process_and_post_batch(batch)
         pbar.process_result(result, batch.size) if opts[:verbose]
       end
 
       pbar.finish if opts[:verbose]
     end
 
-    def build_bulk_string(change)
+    def build_bulk_string_from_change(change)
       action, document = MultiJson.decode(change)
       return '' unless @indices.include?(unprefix_index(document['_index']))
-      changed = @migrate_block ? @migrate_block.call(action, document.extend(RawDocument)) : [{action=>document}]
-      changed = [changed] unless changed.is_a?(Array)
+      build_bulk_string_from_action_doc(action, document)
+    end
+
+    def process_and_post_batch(batch)
       bulk_string = ''
-      changed.compact.each do |hash|
+      batch.each do |document|
+        bulk_string << build_bulk_string_from_action_doc('index', document)
+      end
+      Flex.post_bulk_string(:bulk_string => bulk_string)
+    end
+
+    def build_bulk_string_from_action_doc(action, document)
+      result = @migrate_block ? @migrate_block.call(action, document.extend(RawDocument)) : [{action=>document}]
+      result = [result] unless result.is_a?(Array)
+      bulk_string = ''
+      result.compact.each do |hash|
         act, doc = hash.to_a.flatten
         bulk_string << Flex.build_bulk_string(doc, :reindexing => true, :action => act)
       end

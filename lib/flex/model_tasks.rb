@@ -55,8 +55,8 @@ module Flex
       Conf.http_client.options[:timeout] = options[:timeout]
       deleted = []
       models.each do |model|
-        raise AttributeError, "The model #{model.name} is not a standard Flex::ModelIndexer model" \
-              unless model.is_a?(Flex::ModelIndexer)
+        raise ArgumentError, "The model #{model.name} is not a standard Flex::ModelIndexer model" \
+              unless model.include?(Flex::ModelIndexer)
         index = model.flex.index
         if defined?(LiveReindex) && options[:import_options][:reindexing]
           index = LiveReindex.prefix_index(index)
