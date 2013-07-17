@@ -63,6 +63,11 @@ module Flex
           self.freeze
         end
 
+        def delete
+          @skip_destroy_callbacks = true
+          destroy
+        end
+
         def merge_attributes(attributes)
           attributes.each {|name, value| send "#{name}=", value }
         end

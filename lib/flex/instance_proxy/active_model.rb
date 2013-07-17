@@ -11,8 +11,12 @@ module Flex
       def sync_self
         instance.instance_eval do
           if destroyed?
-            run_callbacks :destroy do
+            if @skip_destroy_callbacks
               flex.remove
+            else
+              run_callbacks :destroy do
+                flex.remove
+              end
             end
           else
             run_callbacks :save do
