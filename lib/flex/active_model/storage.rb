@@ -1,7 +1,7 @@
 module Flex
   module ActiveModel
 
-    class DocumentInvalid < StandardError; end
+    class DocumentInvalidError < StandardError; end
 
     module Storage
 
@@ -30,7 +30,7 @@ module Flex
         end
 
         def save!(options={})
-          perform_validations(options) ? do_save : raise(DocumentInvalid, errors.full_messages.join(", "))
+          perform_validations(options) ? do_save : raise(DocumentInvalidError, errors.full_messages.join(", "))
         end
 
         # Optimistic Lock Update
@@ -48,7 +48,7 @@ module Flex
         end
 
         def safe_update!(options={}, &block)
-          perform_validations(options) ? lock_update(&block) : raise(DocumentInvalid, errors.full_messages.join(", "))
+          perform_validations(options) ? lock_update(&block) : raise(DocumentInvalidError, errors.full_messages.join(", "))
         end
 
         def valid?(context = nil)
