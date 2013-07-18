@@ -156,7 +156,7 @@ module Flex
             if Conf.app_id.nil?
 
       raise MissingStopIndexingProcError, 'The :stop_indexing_proc Proc is not set.' \
-            if !opts.has_key?(:stop_indexing_proc) && Conf.stop_indexing_proc.nil?
+            if !opts.has_key?(:stop_indexing_proc) && !Conf.respond_to?(:stop_indexing_proc)
       stop_indexing_proc = opts.has_key?(:stop_indexing_proc) ? opts.delete(:stop_indexing_proc) : Conf.stop_indexing_proc
 
       raise MissingEnsureIndicesError, 'You must pass the :ensure_indices option when you pass the :models option.' \
