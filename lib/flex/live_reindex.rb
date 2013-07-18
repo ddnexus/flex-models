@@ -51,7 +51,7 @@ module Flex
 
     extend self
 
-    def import_models(opts={}, &block)
+    def models(opts={}, &block)
       @migrate_block = block || proc do |action, doc|
                                   if action == 'index'
                                     begin
@@ -71,7 +71,7 @@ module Flex
       end
     end
 
-    def migrate_active_models(opts={}, &block)
+    def active_models(opts={}, &block)
       @migrate_block  = block
       opts[:verbose]  = true unless opts.has_key?(:verbose)
       opts[:models] ||= Conf.flex_active_models
@@ -95,23 +95,17 @@ module Flex
       end
     end
 
-    def migrate_indices(opts={}, &block)
+    def indices(opts={}, &block)
       @migrate_block = block
       opts[:verbose] = true unless opts.has_key?(:verbose)
       opts[:index] ||= opts.delete(:indices) || config_hash.keys
       transaction(opts) do
-        do_migrate_indices(opts)
+        migrate_indices(opts)
       end
     end
 
-    def reindexing?
-      # the Conf.app_id could be nil when this method is called automatically in the sync_self methods,
-      # however no reindexing has ever started for that app
+    def in_progress?
       !!Redis.get(:reindexing)
-    end
-
-    def reindexing_index?(index)
-      !! index =~ /^#{@timestamp}/
     end
 
     def track_change(action, document)
@@ -173,7 +167,7 @@ module Flex
         # no block, so verbatim copy into the new index
         migrate_block = @migrate_block
         @migrate_block = nil
-        do_migrate_indices(:index => @ensure_indices)
+        migrate_indices(:index => @ensure_indices)
         @migrate_block = migrate_block
       end
 
@@ -228,7 +222,7 @@ module Flex
     end
 
 
-    def do_migrate_indices(opts)
+    def migrate_indices(opts)
       opts[:verbose] = true unless opts.has_key?(:verbose)
       pbar = ProgBar.new(Flex.count(opts)['count'], nil, "index #{opts[:index].inspect}: ") if opts[:verbose]
 
