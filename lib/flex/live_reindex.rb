@@ -42,27 +42,11 @@ module Flex
 
     end
 
-    module RawDocument
-      def index_basename
-        @index_basename ||= self['_index'].sub(/^\d{14}_/, '')
-      end
-    end
-
 
     extend self
 
     def models(opts={}, &block)
-      @migrate_block = block || proc do |action, doc|
-                                  if action == 'index'
-                                    begin
-                                      { action => doc.extend(Flex::Result::DocumentLoader).load! }
-                                    rescue Mongoid::Errors::DocumentNotFound, ActiveRecord::RecordNotFound
-                                      nil # record already deleted
-                                    end
-                                  else
-                                    { action => doc }
-                                  end
-                                end
+      @migrate_block = block || models_default_migrate_proc
       transaction(opts) do
         opts.extend Struct::Mergeable
         opts = opts.deep_merge(:force          => false,
@@ -109,14 +93,14 @@ module Flex
     end
 
     def track_change(action, document)
-      Redis.rpush(:changes, MutliJson.encode([action, document]))
+      Redis.rpush(:changes, MultiJson.encode([action, document]))
     end
 
     # use this method when you are tracking the change of another app
     # you must pass the app_id of the app being affected by the change
     def track_external_change(app_id, action, document)
       return unless Conf.redis
-      Conf.redis.rpush("#{KEYS[:changes]}-#{app_id}", MutliJson.encode([action, document]))
+      Conf.redis.rpush("#{KEYS[:changes]}-#{app_id}", MultiJson.encode([action, document]))
     end
 
     def prefix_index(index)
@@ -147,6 +131,7 @@ module Flex
     end
 
     def transaction(opts={})
+      Config.logger.warn 'Safe reindex is disabled!' if opts[:safe_reindex] == false
       Redis.init
       @indices        = []
       @timestamp      = Time.now.strftime('%Y%m%d%H%M%S_')
@@ -222,6 +207,20 @@ module Flex
     end
 
 
+    def models_default_migrate_proc
+      proc do |action, doc|
+        if action == 'index'
+          begin
+            { action => doc.load! }
+          rescue Mongoid::Errors::DocumentNotFound, ActiveRecord::RecordNotFound
+            nil # record already deleted
+          end
+        else
+          { action => doc }
+        end
+      end
+    end
+
     def migrate_indices(opts)
       opts[:verbose] = true unless opts.has_key?(:verbose)
       pbar = ProgBar.new(Flex.count(opts)['count'], nil, "index #{opts[:index].inspect}: ") if opts[:verbose]
@@ -249,7 +248,13 @@ module Flex
     end
 
     def build_bulk_string(action, document)
-      result = @migrate_block ? @migrate_block.call(action, document.extend(RawDocument)) : [{action=>document}]
+      result = if @migrate_block
+                 document.extend(Result::Document)
+                 document.extend(Result::DocumentLoader)
+                 @migrate_block.call(action, document)
+               else
+                 [{ action => document }]
+               end
       result = [result] unless result.is_a?(Array)
       bulk_string = ''
       result.compact.each do |hash|

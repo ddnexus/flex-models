@@ -36,9 +36,9 @@ module Flex
       end
 
       def model_class(should_raise=false)
-        @model_class ||= ModelClasses.map["#{_index}/#{_type}"]
+        @model_class ||= ModelClasses.map["#{index_basename}/#{self['_type']}"]
       rescue NameError
-        raise DocumentMappingError, "the '#{_index}/#{_type}' document cannot be mapped to any class." \
+        raise DocumentMappingError, "the '#{index_basename}/#{self['_type']}' document cannot be mapped to any class." \
               if should_raise
       end
 
