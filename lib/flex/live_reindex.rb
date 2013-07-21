@@ -204,7 +204,7 @@ module Flex
       unless opts[:safe_reindex] == false
         class_eval <<-ruby, __FILE__, __LINE__
           def transaction(*)
-            raise MultipleReindexError, "Multiple live-reindex attempted! You cannot use any reindexing method multiple times in the same session or you may corrupt your index/indices! The previous reindexing in this session did successfully reindex and swap the new index/indices: #{@indices.map{|i| @timestamp + i}.join(', ')}. If the code-changes that you are about to deploy rely on the successive reindexings that have been aborted, your app may fail. You should complete the other reindexing in single successive deploys ASAP. (If you are working in development mode - the next time - you can silence this error by passing :safe_reindex => false, but now you must restart the session.)"
+            raise MultipleReindexError, "Multiple live-reindex attempted! You cannot use any reindexing method multiple times in the same session or you may corrupt your index/indices! The previous reindexing in this session successfully reindexed and swapped the new index/indices: #{@indices.map{|i| @timestamp + i}.join(', ')}. If the code-changes that you are about to deploy rely on the successive reindexings that have been aborted, your app may fail. You should complete the other reindexing in single successive deploys ASAP. (If you are working in development mode - the next time - you can silence this error by passing :safe_reindex => false, but now you must restart the session.)"
           end
         ruby
       end

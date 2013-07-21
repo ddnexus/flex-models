@@ -3,9 +3,9 @@ version = File.read(File.expand_path('../VERSION', __FILE__)).strip
 
 Gem::Specification.new do |s|
   s.name                      = 'flex-model'
-  s.summary                   = 'Flex Plugin: provides different kinds of integration between ActiveRecord, Mongoid or persistent ActiveModel models and any Elasticserach index.'
+  s.summary                   = 'Transparently integrates your models with one or more elasticsearch indices.'
   s.description               = <<-description
-Flex Plugin: allows to map any ActiveRecord or Mongoid model structure to any Elasticsearch index. It also allows to use the Elasticsearch index as a data storage managed with ActiveModel validation and callbacks; ActiveAttr typecasting, attribute defaults. It implements storage, with optional optimistic lock update, finders, inline scope for easy query definition, etc.
+Transparently integrates your models with one or more elasticsearch indices
   description
   s.homepage                  = 'http://github.com/ddnexus/flex-model'
   s.authors                   = ["Domizio Demichelis"]
@@ -19,8 +19,6 @@ Flex Plugin: allows to map any ActiveRecord or Mongoid model structure to any El
 
   s.add_runtime_dependency 'flex',        version
   s.add_runtime_dependency 'flex-scopes', version
-  s.add_runtime_dependency 'flex-model',  version
-
 
   s.add_runtime_dependency 'active_attr', '>= 0.6.0'
 end
