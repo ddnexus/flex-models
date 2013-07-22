@@ -35,19 +35,18 @@ module Flex
         result.is_a? Document
       end
 
-      def model_class(should_raise=false)
+      def model_class
         @model_class ||= ModelClasses.map["#{index_basename}/#{self['_type']}"]
-      rescue NameError
-        raise DocumentMappingError, "the '#{index_basename}/#{self['_type']}' document cannot be mapped to any class." \
-              if should_raise
       end
 
       def load
-        model_class.find self['_id']
+        model_class.find(self['_id']) if model_class
       end
 
       def load!
-        model_class(true).find self['_id']
+        raise DocumentMappingError, "the '#{index_basename}/#{self['_type']}' document cannot be mapped to any class." \
+              unless model_class
+        model_class.find self['_id']
       end
 
     end

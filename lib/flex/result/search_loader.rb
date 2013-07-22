@@ -17,7 +17,7 @@ module Flex
                                  records  = []
                                  # returns a structure like {Comment=>[{"_id"=>"123", ...}, {...}], BlogPost=>[...]}
                                  h = Utils.group_array_by(collection) do |d|
-                                   d.model_class(should_raise=true)
+                                   d.model_class
                                  end
                                  h.each do |klass, docs|
                                    records |= klass.find(docs.map(&:_id))
