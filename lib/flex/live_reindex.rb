@@ -45,7 +45,7 @@ module Flex
 
     extend self
 
-    def models(opts={}, &block)
+    def reindex_models(opts={}, &block)
       @migrate_block = block || models_default_migrate_proc
       transaction(opts) do
         opts.extend Struct::Mergeable
@@ -55,7 +55,7 @@ module Flex
       end
     end
 
-    def active_models(opts={}, &block)
+    def reindex_active_models(opts={}, &block)
       @migrate_block  = block
       opts[:verbose]  = true unless opts.has_key?(:verbose)
       opts[:models] ||= Conf.flex_active_models
@@ -79,7 +79,7 @@ module Flex
       end
     end
 
-    def indices(opts={}, &block)
+    def reindex_indices(opts={}, &block)
       @migrate_block = block
       opts[:verbose] = true unless opts.has_key?(:verbose)
       opts[:index] ||= opts.delete(:indices) || config_hash.keys
