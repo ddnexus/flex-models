@@ -4,7 +4,7 @@ module Flex
 
       def store(*vars)
         return super unless instance.flex_indexable? # this should never happen since flex_indexable? returns true
-        meth = id.nil? ? :post_store : :put_store
+        meth = (id.nil? || id.empty?) ? :post_store : :put_store
         Flex.send(meth, metainfo, {:data => instance.flex_source}, *vars)
       end
 
