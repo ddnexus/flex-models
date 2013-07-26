@@ -22,7 +22,7 @@ require 'flex/active_model'
 
 require 'flex/refresh_callbacks'
 
-require 'flex/live_reindex'
+require 'flex/live_reindex_model'
 
 require 'flex/result/document_loader'
 require 'flex/result/search_loader'
