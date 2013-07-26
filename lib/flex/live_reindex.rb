@@ -49,8 +49,7 @@ module Flex
       @migrate_block = block || models_default_migrate_proc
       transaction(opts) do
         opts.extend Struct::Mergeable
-        opts = opts.deep_merge(:force          => false,
-                               :import_options => {:reindexing => true})
+        opts = opts.deep_merge(:force => false)
         ModelTasks.new(opts).import_models
       end
     end
@@ -259,7 +258,7 @@ module Flex
       bulk_string = ''
       result.compact.each do |hash|
         act, doc = hash.to_a.flatten
-        bulk_string << Flex.build_bulk_string(doc, :reindexing => true, :action => act)
+        bulk_string << Flex.build_bulk_string(doc, :action => act)
       end
       bulk_string
     end

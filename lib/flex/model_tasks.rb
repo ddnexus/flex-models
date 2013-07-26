@@ -58,7 +58,7 @@ module Flex
         raise ArgumentError, "The model #{model.name} is not a standard Flex::ModelIndexer model" \
               unless model.include?(Flex::ModelIndexer)
         index = model.flex.index
-        if defined?(LiveReindex) && options[:import_options][:reindexing]
+        if defined?(LiveReindex) && LiveReindex.reindexing?
           index = LiveReindex.prefix_index(index)
         end
 
