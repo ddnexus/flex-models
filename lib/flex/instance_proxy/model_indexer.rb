@@ -38,9 +38,9 @@ module Flex
         Flex.search_by_id(metainfo, {:refresh => true, :params => {:fields => '*,_source'}}, *vars)
       end
 
-      def parent_instance(raise=true)
+      def parent_instance
         return unless is_child?
-        @parent_instance ||= instance.send(class_flex.parent_association) || raise &&
+        @parent_instance ||= instance.send(class_flex.parent_association) ||
                                raise(MissingParentError, "missing parent instance for document #{instance.inspect}.")
       end
 
@@ -72,10 +72,10 @@ module Flex
         @id ||= instance.respond_to?(:flex_id) ? instance.flex_id : instance.id.to_s
       end
 
-      def routing(raise=true)
+      def routing
         @routing ||= case
                      when instance.respond_to?(:flex_routing) then instance.flex_routing
-                     when is_child?                           then parent_instance(raise).flex.routing
+                     when is_child?                           then parent_instance.flex.routing
                      when is_parent?                          then create_routing
                      end
       end
