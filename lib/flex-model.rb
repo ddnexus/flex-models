@@ -38,4 +38,3 @@ Flex::Conf.result_extenders  |= [ Flex::Result::DocumentLoader,
                                   Flex::Result::ActiveModel ]
 Flex::Conf.flex_models        = []
 Flex::Conf.flex_active_models = []
-Flex::Conf.redis              = $redis || defined?(::Redis) && ::Redis.current
