@@ -1,5 +1,5 @@
 require 'flex'
-require 'flex/scopes'
+require 'flex-scopes'
 require 'active_attr'
 
 require 'flex/struct/mergeable'
