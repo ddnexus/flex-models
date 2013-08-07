@@ -2,8 +2,9 @@
 
 Transparently integrates your models with one or more elasticsearch indices
 
-## Useful Links
+## Links
 
+* [Flex Repository](https://github.com/ddnexus/flex)
 * [Flex Project (Global Documentation)](http://ddnexus.github.io/flex/doc/)
 * [flex-model Gem (Specific Documentation)](http://ddnexus.github.io/flex/doc/4-flex-model)
 * [Issues](https://github.com/ddnexus/flex-model/issues)
