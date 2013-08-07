@@ -2,12 +2,12 @@ require 'date'
 version = File.read(File.expand_path('../VERSION', __FILE__)).strip
 
 Gem::Specification.new do |s|
-  s.name                      = 'flex-model'
+  s.name                      = 'flex-models'
   s.summary                   = 'Transparently integrates your models with one or more elasticsearch indices.'
   s.description               = <<-description
 Transparently integrates your models with one or more elasticsearch indices
   description
-  s.homepage                  = 'http://github.com/ddnexus/flex-model'
+  s.homepage                  = 'http://github.com/ddnexus/flex-models'
   s.authors                   = ["Domizio Demichelis"]
   s.email                     = 'dd.nexus@gmail.com'
   s.extra_rdoc_files          = %w[README.md]

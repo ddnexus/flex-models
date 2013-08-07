@@ -1,4 +1,4 @@
-require 'flex-model'
+require 'flex-models'
 
 env   = defined?(Rails) ? :environment : []
 

@@ -6,9 +6,9 @@ Transparently integrates your models with one or more elasticsearch indices
 
 * [Flex Repository](https://github.com/ddnexus/flex)
 * [Flex Project (Global Documentation)](http://ddnexus.github.io/flex/doc/)
-* [flex-model Gem (Specific Documentation)](http://ddnexus.github.io/flex/doc/4-flex-model)
-* [Issues](https://github.com/ddnexus/flex-model/issues)
-* [Pull Requests](https://github.com/ddnexus/flex-model/pulls)
+* [flex-models Gem (Specific Documentation)](http://ddnexus.github.io/flex/doc/4-flex-models)
+* [Issues](https://github.com/ddnexus/flex-models/issues)
+* [Pull Requests](https://github.com/ddnexus/flex-models/pulls)
 
 ## Branches
 
@@ -21,4 +21,4 @@ Special thanks for their sponsorship to [Escalate Media](http://www.escalatemedi
 ## Copyright
 
 Copyright (c) 2012-2013 by [Domizio Demichelis](mailto://dd.nexus@gmail.com)<br>
-See [LICENSE](https://github.com/ddnexus/flex-model/blob/master/LICENSE) for details.
+See [LICENSE](https://github.com/ddnexus/flex-models/blob/master/LICENSE) for details.
