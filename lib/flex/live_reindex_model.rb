@@ -4,6 +4,9 @@ module Flex
 
     def reindex_models(opts={})
 
+      raise NotImplementedError, 'Flex::LiveReindex.reindex_models requires the "flex-admin" gem. Please, install it.' \
+            unless defined?(Flex::Admin)
+
       on_each_change do |action, document|
         if action == 'index'
           begin
@@ -28,6 +31,10 @@ module Flex
     end
 
     def reindex_active_models(opts={})
+
+      raise NotImplementedError, 'Flex::LiveReindex.reindex_models requires the "flex-admin" gem. PLease, install it.' \
+            unless defined?(Flex::Admin)
+
       yield self if block_given?
 
       opts[:verbose]  = true unless opts.has_key?(:verbose)
